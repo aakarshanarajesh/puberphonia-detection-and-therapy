@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Therapy Modules</title>
+
+<style>
+:root{
+  --primary:#f4a623;
+  --primary-dark:#c47f0e;
+  --bg:#fdf7ef;
+  --surface:#ffffff;
+  --text:#182430;
+  --muted:#5b738a;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+/* NAV */
+.nav{
+  background:#ffffff;
+  border-bottom:1px solid rgba(0,0,0,0.05);
+  padding:14px 24px;
+}
+.nav-inner{
+  max-width:1100px;
+  margin:0 auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.nav-left{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.clinic-name{
+  font-weight:800;
+  color:var(--primary-dark);
+}
+.clinic-sub{
+  font-size:11px;
+  color:var(--muted);
+}
+.nav-link{
+  font-size:13px;
+  font-weight:700;
+  color:var(--primary-dark);
+}
+
+
+/* HEADER */
+.therapy-header{
+  max-width:1100px;
+  margin:28px auto 12px;
+  padding:0 16px;
+}
+.therapy-header h1{
+  font-size:30px;
+  margin-bottom:6px;
+}
+.therapy-header p{
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* GRID */
+.modules-grid{
+  max-width:1100px;
+  margin:20px auto 60px;
+  padding:0 16px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+}
+
+/* CARD */
+.therapy-module{
+  background:var(--surface);
+  border-radius:20px;
+  padding:14px;
+  box-shadow:0 10px 24px rgba(24,36,48,0.08);
+  border:1px solid rgba(0,0,0,0.04);
+}
+
+.therapy-module h3{
+  margin:0 0 10px;
+  font-size:16px;
+  color:#12354a;
+}
+
+/* VIDEO */
+.video-box{
+  width:100%;
+  aspect-ratio:16/9;
+  border-radius:14px;
+  overflow:hidden;
+  background:#000;
+}
+.video-box video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+</style>
+</head>
+
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-left">
+      
+      <div>
+        <div class="clinic-name">Train Your Voice</div>
+        <div class="clinic-sub"> Screen. Treat. Transform the Voice. </div>
+      </div>
+    </div>
+    <a href="patient.html" class="nav-link">▶ Take a Voice Test</a>
+
+  </div>
+</header>
+
+<section class="therapy-header">
+  <h1>Puberphonia Therapy Modules</h1>
+  <p>Follow these exercises exactly as demonstrated by the doctor.</p>
+</section>
+
+<section class="modules-grid">
+
+<div class="therapy-module">
+  <h3>1. Lip Trills</h3>
+
+  <div class="video-box">
+    <video controls src="1.mp4"></video>
+  </div>
+
+  <button onclick="location.href='lip-trill-tracker.html'"
+          style="margin-top:10px;
+                 padding:8px 16px;
+                 border:none;
+                 border-radius:999px;
+                 background:#f4a623;
+                 color:#fff;
+                 font-weight:600;
+                 cursor:pointer;">
+    Start Lip Trill Practice
+  </button>
+</div>
+
+<div class="therapy-module"><h3>2. Fire-Up Breath</h3><div class="video-box"><video controls src="2.mp4"></video></div></div>
+<div class="therapy-module"><h3>3. Speak From the Mask</h3><div class="video-box"><video controls src="3.mp4"></video></div></div>
+<div class="therapy-module"><h3>4. Om Chanting</h3><div class="video-box"><video controls src="4.mp4"></video></div></div>
+<div class="therapy-module"><h3>5. Vibrate Uvula</h3><div class="video-box"><video controls src="5.mp4"></video></div></div>
+
+<!-- 6.mp4 intentionally missing -->
+
+<div class="therapy-module"><h3>6. Ferengiya Speech</h3><div class="video-box"><video controls src="7.mp4"></video></div></div>
+<div class="therapy-module"><h3>7. Open Jaw Vowels</h3><div class="video-box"><video controls src="8.mp4"></video></div></div>
+<div class="therapy-module"><h3>8. Hot Potato Speech</h3><div class="video-box"><video controls src="9.mp4"></video></div></div>
+<div class="therapy-module"><h3>9. Humming</h3><div class="video-box"><video controls src="10.mp4"></video></div></div>
+<div class="therapy-module"><h3>10. Isometric Exercise</h3><div class="video-box"><video controls src="11.mp4"></video></div></div>
+<div class="therapy-module"><h3>11. Lie-Down Talk</h3><div class="video-box"><video controls src="12.mp4"></video></div></div>
+<div class="therapy-module"><h3>12. Talk While Exhaling</h3><div class="video-box"><video controls src="13.mp4"></video></div></div>
+<div class="therapy-module"><h3>13. Lowering of Larynx</h3><div class="video-box"><video controls src="14.mp4"></video></div></div>
+<div class="therapy-module"><h3>14. Manipulate Organ</h3><div class="video-box"><video controls src="15.mp4"></video></div></div>
+<div class="therapy-module"><h3>15. Treadmill Voice</h3><div class="video-box"><video controls src="16.mp4"></video></div></div>
+<div class="therapy-module"><h3>16. VR Kinetic</h3><div class="video-box"><video controls src="17.mp4"></video></div></div>
+<div class="therapy-module"><h3>17. Piano Training</h3><div class="video-box"><video controls src="18.mp4"></video></div></div>
+<div class="therapy-module"><h3>18. Karaoke</h3><div class="video-box"><video controls src="19.mp4"></video></div></div>
+<div class="therapy-module"><h3>19. Elongation of Vocal Tract</h3><div class="video-box"><video controls src="20.mp4"></video></div></div>
+<div class="therapy-module"><h3>20. Working Model</h3><div class="video-box"><video controls src="21.mp4"></video></div></div>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+timestamp,patient_id,age,mean_f0_hz,f0_std_hz,jitter_percent,pitch_label,quality_label
+2026-01-06T01:27:58,SIVA-0407,30,103.5,7.4,3.44,Normal Male,Hoarse
+2026-01-09T13:05:44,SIVA-N76C82,30,252.8,13.6,1.59,Puberphonia,Clear
+2026-01-09T13:11:14,SIVA-N76C82,30,225.2,25.8,2.94,Puberphonia,Clear
+2026-01-09T13:16:34,SIVA-N76C82,30,247,14,2.05,Puberphonia,Clear
+2026-01-09T13:21:50,SIVA-N76C82,30,193.8,57.2,0.95,Borderline,Hoarse
+2026-01-09T13:48:11,SIVA-J5617Y,31,80,2.5,0.81,Normal Male,Clear
+2026-01-09T13:56:54,SIVA-KE8VQV,32,90,2.5,0.31,Normal Male,Clear
+2026-01-09T14:28:55,SIVA-9GPQNO,41,197.4,3,0.29,Puberphonia,Clear
+2026-01-09T15:12:42,SIVA-J191L7,41,203.8,2.9,0.31,Puberphonia,Clear
+2026-01-10T01:05:06,SIVA-MOPBBY,20,95.6,3,0.72,Recheck Required,Recheck Required,0,0,False
+2026-01-10T01:12:31,SIVA-MOPBBY,20,219.1,2,0.3,Recheck Required,Recheck Required,0,0,False
+2026-01-10T01:35:54,SIVA-MHNDIY,85,200.9,4.2,0.38,Borderline,Graph Backup,0,0,False
+2026-01-10T12:28:17,SIVA-LV2643,20,112.1,0.5,0.21,Borderline,Graph Backup,0,0,False
+2026-01-10T14:01:39,SIVA-7KR16C,20,253.1,4.4,0.43,Puberphonia,Graph Backup,0,0,False
+2026-01-10T14:45:38,SIVA-F3ZMMV,25,0,0,0,Normal Male,Graph Backup,0,0,False
+2026-01-10T15:33:20,SIVA-UO502A,20,236.1,15.2,1.92,Puberphonia,Clear,34,0.026,True
+2026-01-10T16:12:56,SIVA-UO502A,20,129.5,6.8,1.09,Normal Male,Clear,0,0,False
+2026-01-10T16:43:34,SIVA-UO502A,20,0,0,0,Borderline,Graph Backup,0,0,False
+2026-01-10T19:41:54,SIVA-VMHZTN,25,170.9,4.3,0.45,Borderline,Clear,0,0,False
+2026-01-10T19:51:44,SIVA-VMHZTN,25,127.3,6.6,2.6,Normal Male,Clear,0,0,False
+2026-01-10T19:52:11,SIVA-VMHZTN,25,128.8,6.3,1.69,Normal Male,Clear,0,0,False
+2026-01-10T19:52:50,SIVA-VMHZTN,25,124.4,6.4,1.85,Normal Male,Clear,0,0,False
+2026-01-10T19:53:23,SIVA-VMHZTN,25,127.3,6,2.46,Normal Male,Clear,0,0,False
+2026-01-10T19:53:37,SIVA-VMHZTN,25,0,0,0,Borderline,Graph Backup,0,0,False
+2026-01-10T19:53:53,SIVA-VMHZTN,25,128,5.3,1.96,Normal Male,Clear,0,0,False
+2026-01-10T19:54:10,SIVA-VMHZTN,25,125.8,9.5,2.52,Normal Male,Clear,0,0,False
+2026-01-10T19:54:33,SIVA-VMHZTN,25,128,7.7,2.08,Normal Male,Clear,0,0,False
+2026-01-10T19:54:43,SIVA-VMHZTN,25,131,9.4,2.89,Normal Male,Clear,0,0,False
+2026-01-10T20:00:09,SIVA-VMHZTN,25,150.5,27.7,3.59,Normal Male,Hoarse,0,0,False
+2026-01-10T20:19:52,SIVA-2SEBBI,35,260.5,10.7,1.48,Puberphonia,Graph Backup,0,0,False
+2026-01-10T20:32:57,SIVA-2SEBBI,35,241.7,25.4,3.24,Puberphonia,Hoarse,0,0,False
+2026-01-12T14:17:59,SIVA-YY1T46,20,203.2,17.2,1.97,Puberphonia,Graph Backup,0,0,False
+2026-01-13T15:31:48,SIVA-KGCOV2,30,98.4,6.9,0.85,Normal Male,Graph Backup,0,0,False
+2026-01-13T15:40:48,SIVA-KGCOV2,25,90,0.6,0.14,Normal Male,Graph Backup,0,0,False
+2026-01-13T17:54:52,SIVA-KGCOV2,25,247.3,25.4,3.12,Puberphonia,Graph Backup,0,0,False
+2026-01-30T09:09:14,SIVA-LAL4OB,45,92.6,4.2,0.83,Normal Male,Graph Backup,0,0,False
+2026-02-10T07:04:55,944HJX,20,269.7,17.6,1.01,Puberphonia,Graph Backup,0,0,False
+2026-02-10T11:15:44,A361A0,47,136.4,4.9,0.35,Normal Male,Graph Backup,0,0,False
+2026-02-10T11:15:44,A361A0,47,216.5,3.4,0.27,Puberphonia,Clear,0,0,False
+2026-02-10T11:15:44,A361A0,47,0,0,0,Borderline,Graph Backup,0,0,False

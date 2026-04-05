@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Details</title>
+
+<style>
+  :root{
+    --primary:#f4a623;
+    --primary-dark:#c47f0e;
+    --bg:#fdf7ef;
+    --surface:#ffffff;
+    --text:#182430;
+    --muted:#5b738a;
+    --border:#ecd8b8;
+    --radius:22px;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(244,166,35,0.22), transparent 50%),
+      radial-gradient(circle at bottom right, rgba(244,166,35,0.12), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+  }
+
+  /* ENTRY ANIMATION */
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(16px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  .shell{
+    max-width:420px;
+    margin:56px auto;
+    padding:0 16px;
+    animation:fadeUp .7s ease-out;
+  }
+
+  .top-link{
+    font-size:12px;
+    margin-bottom:14px;
+    color:var(--muted);
+  }
+  .top-link a{
+    color:var(--primary-dark);
+    text-decoration:none;
+    font-weight:600;
+  }
+
+  .card{
+    position:relative;
+    background:var(--surface);
+    border-radius:var(--radius);
+    padding:26px 24px 24px;
+    border:1px solid rgba(244,166,35,0.25);
+    box-shadow:
+      0 20px 45px rgba(24,36,48,0.18),
+      inset 0 1px 0 rgba(255,255,255,0.7);
+    overflow:hidden;
+  }
+
+  /* SOFT GLOW */
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:-40%;
+    background:radial-gradient(circle, rgba(244,166,35,0.18), transparent 60%);
+    opacity:.45;
+    pointer-events:none;
+    animation:floatGlow 10s linear infinite;
+  }
+
+  @keyframes floatGlow{
+    0%{transform:translate(0,0);}
+    50%{transform:translate(40px,-30px);}
+    100%{transform:translate(0,0);}
+  }
+
+  h1{
+    font-size:22px;
+    margin:0 0 6px;
+    font-weight:800;
+    color:#1f2933;
+    position:relative;
+  }
+
+  p{
+    margin:0 0 18px;
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.55;
+    position:relative;
+  }
+
+  label{
+    display:block;
+    font-size:13px;
+    margin-bottom:6px;
+    font-weight:600;
+  }
+
+  input[type="text"],
+  input[type="number"]{
+    width:100%;
+    padding:11px 14px;
+    font-size:13px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    outline:none;
+    background:#fff;
+    transition:border .2s ease, box-shadow .2s ease;
+  }
+
+  input:focus{
+    border-color:var(--primary);
+    box-shadow:
+      0 0 0 1px rgba(244,166,35,.25),
+      0 6px 18px rgba(244,166,35,.25);
+  }
+
+  .field-group{margin-bottom:18px;}
+
+  .hint{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+
+  .row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+
+  .btn{
+    border-radius:999px;
+    border:none;
+    padding:10px 18px;
+    font-size:13px;
+    cursor:pointer;
+    font-weight:700;
+    white-space:nowrap;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+
+  .btn-primary{
+    background:linear-gradient(180deg, #f7b84d, var(--primary));
+    color:#fff;
+    box-shadow:0 12px 26px rgba(244,166,35,.45);
+  }
+
+  .btn-primary:hover{
+    transform:translateY(-1px);
+    box-shadow:0 16px 32px rgba(244,166,35,.55);
+  }
+
+  .btn-primary:active{
+    transform:translateY(0);
+    box-shadow:0 10px 20px rgba(244,166,35,.4);
+  }
+
+  .btn-outline{
+    background:transparent;
+    border:1px dashed var(--border);
+    color:#8a6d00;
+  }
+
+  /* RESPECT MOTION PREFERENCES */
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important;}
+  }
+</style>
+</head>
+
+<body>
+
+<div class="shell">
+
+  <div class="top-link">
+    ← <a href="index.html">Back to Voice tests</a>
+  </div>
+
+  <div class="card">
+    <h1>Patient details</h1>
+    <p>
+      Please enter your Patient ID. If you are a new user, generate a Patient ID
+      and enter your age before continuing.
+    </p>
+
+    <div class="field-group">
+      <label for="patientId">Patient ID</label>
+      <div class="row">
+        <input type="text" id="patientId" placeholder="e.g. AB1234">
+        <button type="button" class="btn btn-outline" onclick="generateId()">
+          Generate
+        </button>
+      </div>
+      <div class="hint">
+        Use the same Patient ID each visit to track progress.
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label for="age">Age (years)</label>
+      <input type="number" id="age" min="5" max="80" placeholder="e.g. 24">
+    </div>
+
+    <button type="button" class="btn btn-primary" onclick="goNext()">
+      Next →
+    </button>
+  </div>
+
+</div>
+
+<script>
+function generateId(){
+  const rand = Math.random().toString(36).substring(2,8).toUpperCase();
+  document.getElementById('patientId').value = rand;
+}
+
+function goNext(){
+  const pid = document.getElementById('patientId').value.trim();
+  const ageVal = parseInt(document.getElementById('age').value,10);
+
+  if(!pid){
+    alert('Please enter or generate a Patient ID.');
+    return;
+  }
+  if(isNaN(ageVal) || ageVal < 5 || ageVal > 120){
+    alert('Please enter a valid age (5–120).');
+    return;
+  }
+
+  const url = 'voice_screener.html'
+            + '?patientId=' + encodeURIComponent(pid)
+            + '&age=' + encodeURIComponent(ageVal);
+  window.location.href = url;
+}
+</script>
+
+</body>
+</html>
+

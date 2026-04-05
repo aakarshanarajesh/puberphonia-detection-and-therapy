@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lip Trill Practice – Real-Time Feedback</title>
+
+<!-- MediaPipe -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<style>
+:root{
+  --primary:#f4a623;
+  --success:#2f9e44;
+  --danger:#e03131;
+  --bg:#fdf7ef;
+  --text:#182430;
+  --muted:#5b738a;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  text-align:center;
+}
+
+/* NAV */
+.top-bar{
+  padding:14px 20px;
+  background:#fff;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.top-bar a{
+  text-decoration:none;
+  color:#065f87;
+  font-weight:600;
+  font-size:13px;
+}
+
+/* CONTENT */
+.container{
+  max-width:900px;
+  margin:24px auto;
+  padding:0 16px;
+}
+
+h1{
+  margin-bottom:6px;
+}
+p{
+  font-size:14px;
+  color:var(--muted);
+}
+
+/* VIDEO */
+.video-wrap{
+  position:relative;
+  width:100%;
+  max-width:640px;
+  margin:20px auto;
+}
+
+video, canvas{
+  width:100%;
+  border-radius:16px;
+}
+
+canvas{
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+/* FEEDBACK */
+.feedback{
+  margin-top:16px;
+  font-size:20px;
+  font-weight:700;
+  padding:12px 18px;
+  border-radius:999px;
+  display:inline-block;
+}
+
+.good{
+  background:rgba(47,158,68,.15);
+  color:var(--success);
+}
+
+.bad{
+  background:rgba(224,49,49,.15);
+  color:var(--danger);
+}
+
+/* INFO */
+.note{
+  margin-top:18px;
+  font-size:12px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <a href="therapy.html">← Back to Therapy Modules</a>
+</div>
+
+<div class="container">
+  <h1>Lip Trill Practice</h1>
+  <p>
+    Pucker your lips and blow gently to create a lip trill sound.<br>
+    Watch the feedback below and adjust until it turns green.
+  </p>
+
+  <div class="video-wrap">
+    <video id="video" autoplay muted playsinline></video>
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <div id="feedback" class="feedback bad">
+    🔴 Pucker more
+  </div>
+
+  <div class="note">
+    This is a guidance tool, not a diagnostic system.<br>
+    Best results in good lighting, face straight to camera.
+  </div>
+</div>
+
+<script>
+const videoElement = document.getElementById('video');
+const canvasElement = document.getElementById('overlay');
+const canvasCtx = canvasElement.getContext('2d');
+const feedbackEl = document.getElementById('feedback');
+
+// Lip landmarks (MediaPipe)
+const UPPER_LIP = 13;
+const LOWER_LIP = 14;
+
+// Threshold (empirically safe)
+const PUCKER_THRESHOLD = 0.015;
+
+function onResults(results){
+  canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+  if (!results.multiFaceLandmarks) return;
+
+  const landmarks = results.multiFaceLandmarks[0];
+
+  const upperLip = landmarks[UPPER_LIP];
+  const lowerLip = landmarks[LOWER_LIP];
+
+  const lipDist = Math.abs(upperLip.y - lowerLip.y);
+
+  // Feedback logic
+  if (lipDist < PUCKER_THRESHOLD) {
+    feedbackEl.textContent = "🟢 Good pucker";
+    feedbackEl.className = "feedback good";
+  } else {
+    feedbackEl.textContent = "🔴 Pucker more";
+    feedbackEl.className = "feedback bad";
+  }
+}
+
+// FaceMesh
+const faceMesh = new FaceMesh({
+  locateFile: file =>
+    `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+});
+
+faceMesh.setOptions({
+  maxNumFaces: 1,
+  refineLandmarks: true,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
+});
+
+faceMesh.onResults(onResults);
+
+// Camera
+const camera = new Camera(videoElement, {
+  onFrame: async () => {
+    await faceMesh.send({image: videoElement});
+  },
+  width: 640,
+  height: 480
+});
+
+camera.start();
+
+// Resize canvas
+videoElement.addEventListener('loadeddata', () => {
+  canvasElement.width = videoElement.videoWidth;
+  canvasElement.height = videoElement.videoHeight;
+});
+</script>
+
+</body>
+</html>

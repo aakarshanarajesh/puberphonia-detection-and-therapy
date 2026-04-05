@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Voice Screener – pYIN Validated</title>
+<style>
+    :root {
+        --primary: #f4a623;
+        --primary-dark: #c47f0e;
+        --bg: #fdf7ef;
+        --surface: #ffffff;
+        --text: #1a1a1a;
+        --muted: #6c757d;
+        --border: #ecd8b8;
+        --radius: 16px;
+        --success: #51a86e;
+        --warning: #ffa500;
+        --danger: #e03131;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+        margin:0;
+        font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        background:radial-gradient(circle at top,#fff1d6 0,#fdf7ef 50%,#fffaf0 100%);
+        color:var(--text);
+    }
+
+    .shell{
+        max-width:1000px;
+        margin:24px auto 32px;
+        padding:0 16px;
+    }
+
+    header{
+        background:linear-gradient(135deg,#f4a623,#f7b84d);
+        color:#fff;
+        border-radius:24px;
+        padding:18px 20px 16px;
+        box-shadow:0 18px 40px rgba(15,23,42,0.35);
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:12px;
+    }
+
+    .brand-title{margin:0;font-size:22px;font-weight:700;}
+    .brand-sub{margin:2px 0 0;font-size:13px;opacity:.9;}
+
+    .badge-pyin{
+        background:rgba(255,255,255,0.25);
+        padding:2px 8px;
+        border-radius:999px;
+        font-size:12px;
+        font-weight:600;
+    }
+
+    main{
+        margin-top:22px;
+        display:grid;
+        grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+        gap:20px;
+    }
+
+    .card{
+        background:var(--surface);
+        border-radius:var(--radius);
+        padding:18px 18px 20px;
+        border:1px solid rgba(15,23,42,.04);
+        box-shadow:0 10px 30px rgba(15,23,42,.10);
+    }
+
+    .card h2{margin:0 0 8px;font-size:18px;color:var(--primary-dark);}
+    .card p{margin:0 0 14px;font-size:13px;color:var(--muted);}
+
+    label{display:block;font-size:13px;margin-bottom:6px;font-weight:500;}
+
+    input[type="number"]{
+        width:120px;
+        padding:8px 10px;
+        border-radius:999px;
+        border:1px solid var(--border);
+        font-size:13px;
+        outline:none;
+    }
+
+    input[type="number"]:focus{
+        border-color:var(--primary);
+        box-shadow:0 0 0 1px rgba(244,166,35,.18);
+    }
+
+    .btn{
+        border:none;border-radius:999px;padding:9px 16px;
+        font-size:13px;font-weight:500;cursor:pointer;
+        display:inline-flex;align-items:center;gap:6px;
+        transition:.18s ease;
+    }
+
+    .btn-primary{background:var(--primary);color:#fff;}
+    .btn-primary:hover{background:var(--primary-dark);}
+    .btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+
+    .btn-secondary{
+        background:transparent;border:1px solid #adb5bd;color:#6c757d;
+    }
+    .btn-secondary:hover{background:rgba(173,181,189,.12);}
+    .btn-secondary:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* ================= MIC BUTTON ================= */
+
+    .mic-button{
+        width:80px;
+        height:80px;
+        border-radius:50%;
+        border:none;
+        background:var(--primary);
+        color:#fff;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:40px;
+        box-shadow:0 8px 24px rgba(244,166,35,0.35);
+        transition:all .2s ease;
+        margin:0 auto;
+        position:relative;
+    }
+
+    .mic-button:hover{
+        background:var(--primary-dark);
+        box-shadow:0 12px 32px rgba(244,166,35,0.45);
+        transform:scale(1.05);
+    }
+
+    /* idle breathing glow */
+    .mic-button::after{
+        content:"";
+        position:absolute;
+        inset:-6px;
+        border-radius:50%;
+        background:radial-gradient(circle, rgba(244,166,35,0.35), transparent 65%);
+        opacity:0;
+        animation:mic-breathe 3s ease-in-out infinite;
+        pointer-events:none;
+    }
+
+    .mic-button.recording{
+        background:var(--danger);
+        animation:mic-pulse 1.5s infinite;
+    }
+
+    /* stronger glow while recording */
+    .mic-button.recording::after{
+        inset:-10px;
+        background:radial-gradient(circle, rgba(224,49,49,0.45), transparent 65%);
+        animation:mic-record-glow 1.4s ease-in-out infinite;
+    }
+
+    @keyframes mic-pulse{
+        0%{box-shadow:0 0 0 0 rgba(224,49,49,0.7);}
+        50%{box-shadow:0 0 0 15px rgba(224,49,49,0.3);}
+        100%{box-shadow:0 0 0 0 rgba(224,49,49,0);}
+    }
+
+    @keyframes mic-breathe{
+        0%{opacity:0;transform:scale(0.9);}
+        50%{opacity:.6;transform:scale(1);}
+        100%{opacity:0;transform:scale(0.9);}
+    }
+
+    @keyframes mic-record-glow{
+        0%{opacity:.3;transform:scale(0.85);}
+        50%{opacity:.9;transform:scale(1);}
+        100%{opacity:.3;transform:scale(0.85);}
+    }
+
+    /* ================= STATUS ================= */
+
+    .status-dot{
+        width:9px;height:9px;border-radius:50%;
+        background:#adb5bd;transition:.18s;
+    }
+
+    .status-dot.live{
+        background:var(--danger);
+        box-shadow:0 0 0 0 rgba(224,49,49,.6);
+        animation:pulse 1.2s infinite;
+    }
+
+    @keyframes pulse{
+        0%{box-shadow:0 0 0 0 rgba(224,49,49,.6);}
+        100%{box-shadow:0 0 0 10px rgba(224,49,49,0);}
+    }
+
+    /* ================= GRAPH ================= */
+
+    .graph-box{
+        margin-top:10px;background:#fff;border-radius:12px;
+        border:1px solid var(--border);padding:10px 10px 14px;
+    }
+
+    .graph-header{
+        display:flex;justify-content:space-between;
+        align-items:baseline;font-size:11px;color:var(--muted);
+        margin-bottom:4px;
+    }
+
+    .graph-wrapper{display:flex;align-items:stretch;}
+
+    .y-axis-labels{
+        width:42px;font-size:11px;color:var(--muted);
+        display:flex;flex-direction:column;
+        justify-content:space-between;padding:4px 4px 4px 0;
+    }
+
+    .y-axis-labels span{text-align:right;}
+
+    #freqCanvas{
+        flex:1;height:150px;background:#fffaf2;border-radius:10px;
+    }
+
+    .axis-label{
+        display:flex;justify-content:space-between;
+        font-size:11px;color:var(--muted);margin-top:4px;
+    }
+
+    .range-legend{
+        font-size:10px;color:var(--muted);
+        margin-top:8px;line-height:1.4;
+    }
+
+    .range-item{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+
+    .range-box{display:inline-block;width:14px;height:10px;border-radius:2px;}
+    .normal-box{background:rgba(81,168,110,0.25);}
+    .borderline-box{background:rgba(255,165,0,0.25);}
+    .pubph-box{background:rgba(224,49,49,0.25);}
+
+    /* ================= RESULTS ================= */
+
+    .result-tag{
+        display:inline-flex;align-items:center;gap:6px;
+        font-size:12px;padding:6px 12px;border-radius:8px;
+        margin-bottom:10px;font-weight:600;
+    }
+
+    .result-main{font-size:20px;font-weight:600;margin:8px 0;}
+    .result-detail{font-size:13px;color:var(--muted);line-height:1.5;margin:8px 0;}
+
+    .metrics-table{
+        width:100%;font-size:12px;border-collapse:collapse;margin:10px 0;
+    }
+
+    .metrics-table td{
+        padding:6px 8px;border-bottom:1px solid #e2e8f0;
+    }
+
+    .metrics-table strong{color:var(--text);}
+
+    .threshold-info{
+        background:#fff7e6;border-left:3px solid var(--primary);
+        padding:10px 12px;border-radius:6px;
+        font-size:11px;margin-top:10px;color:#8a6d00;
+    }
+
+    .paragraph-box{
+        margin-top:10px;background:#fffaf2;border-radius:12px;
+        border:1px solid var(--border);padding:10px 12px;
+        font-size:12px;color:var(--muted);
+    }
+
+    .paragraph-box select{
+        margin-bottom:6px;padding:4px 8px;font-size:12px;
+    }
+
+    .tabs{
+        display:flex;border-bottom:1px solid var(--border);
+        margin:-4px -18px 10px;padding:0 18px;
+    }
+
+    .tab-btn{
+        flex:1;padding:8px 10px;border:none;background:none;
+        cursor:pointer;font-size:13px;color:#6c757d;
+        border-bottom:2px solid transparent;font-weight:500;
+    }
+
+    .tab-btn.active{
+        color:var(--primary);
+        border-bottom-color:var(--primary);
+        font-weight:600;
+    }
+
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    .btn-success{background:var(--success);color:#fff;}
+    .btn-success:hover{background:#459a64;}
+    .btn-success:disabled{opacity:.6;cursor:not-allowed;}
+
+    .button-row{display:flex;gap:8px;flex-wrap:wrap;}
+
+    @media(max-width:768px){
+        main{grid-template-columns:1fr;}
+        header{flex-direction:column;text-align:center;}
+    }
+    /* ================= PROCESSING LOADER ================= */
+
+.processing-loader{
+    display:none;
+    margin-left:8px;
+    align-items:center;
+    gap:4px;
+}
+
+.processing-loader span{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:currentColor;
+    opacity:0.3;
+    animation:dotPulse 1.4s infinite ease-in-out;
+}
+
+.processing-loader span:nth-child(1){animation-delay:0s;}
+.processing-loader span:nth-child(2){animation-delay:.15s;}
+.processing-loader span:nth-child(3){animation-delay:.3s;}
+
+@keyframes dotPulse{
+    0%{opacity:.3;transform:translateY(0);}
+    50%{opacity:1;transform:translateY(-4px);}
+    100%{opacity:.3;transform:translateY(0);}
+}
+
+/* 🔥 Auto-activate loader ONLY during "Analyzing" */
+#resultTag:has(:contains("Analyzing")) .processing-loader,
+#resultTag:has(:contains("⏳")) .processing-loader{
+    display:inline-flex;
+}
+
+</style>
+
+
+</head>
+<body>
+<div class="shell">
+    <header>
+        <div>
+            <h1 class="brand-title">🎤 Clinical Voice Screener</h1>
+            <p class="brand-sub">Real-time Pitch Detection – Validated (Dec 2025)</p>
+        </div>
+        
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>Voice Analysis</h2>
+            <p>Record your voice while reading the paragraph below to analyze pitch and detect puberphonia.</p>
+
+            <label for="ageInput" style="display:none;">Age (years)</label>
+            <input type="number" id="ageInput" min="5" max="80" placeholder="e.g. 25" style="margin-bottom:14px; display:none;">
+
+            <h2 style="margin-top:12px;margin-bottom:8px;">Step 1: Read the Passage</h2>
+            <p style="font-size:12px;color:var(--muted);">Choose your language and read the paragraph aloud (10–20 seconds) while recording.</p>
+
+            <div class="paragraph-box">
+                <label for="langSelect" style="margin-bottom:4px;">Preferred language</label>
+                <select id="langSelect">
+                    <option value="en">English</option>
+                    <option value="ta">Tamil</option>
+                    <option value="te">Telugu</option>
+                    <option value="kn">Kannada</option>
+                    <option value="hi">Hindi</option>
+                    <option value="ml">Malayalam</option>
+                </select>
+                <div id="paragraphText" style="margin-top:8px;font-size:12px;">
+                    Ah, I see. The long, steady road ahead leads to our goal. We gaze at the vast expanse and feel at ease. The air is warm. We hear the peaceful sound. All is well. Stay steady. Breathe easy.
+                </div>
+            </div>
+
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;text-align:center;margin-top:14px;margin-bottom:14px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+                <button type="button" class="mic-button" id="micBtn">🎤</button>
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                    <div id="statusDot" class="status-dot"></div>
+                    <span id="statusText" style="font-size:12px;color:var(--muted);">Ready</span>
+                </div>
+            
+                <small style="display:block;margin-top:4px;color:var(--muted);">Ensure quiet environment, read the paragraph clearly</small>
+            </div>
+
+            <div class="graph-box">
+                <div class="graph-header">
+                    <span>Fundamental Frequency (F0) Over Time</span>
+                    <span id="liveF0Label">– Hz</span>
+                </div>
+                <div class="graph-wrapper">
+                    <div class="y-axis-labels">
+                        <span>280</span>
+                        <span>200</span>
+                        <span>120</span>
+                    </div>
+                    <canvas id="freqCanvas"></canvas>
+                </div>
+                <div class="axis-label">
+                    <span>0 s</span>
+                    <span>Time</span>
+                    <span id="timeRightLabel">5 s</span>
+                </div>
+                <div class="range-legend">
+                    <div class="range-item">
+                        <div class="range-box normal-box"></div>
+                        <span><strong>Normal Male:</strong> 95–160 Hz</span>
+                    </div>
+                    <div class="range-item">
+                        <div class="range-box borderline-box"></div>
+                        <span><strong>Borderline:</strong> 161–194 Hz</span>
+                    </div>
+                    <div class="range-item">
+                        <div class="range-box pubph-box"></div>
+                        <span><strong>Puberphonia:</strong> ≥195 Hz</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="tabs">
+                <button class="tab-btn" data-tab="summaryTab">Summary</button>
+                <button class="tab-btn active" data-tab="resultsTab">Results</button>
+            </div>
+
+            <div id="summaryTab" class="tab-panel">
+                <p style="font-size:13px;color:var(--muted);">
+                    This tab can show additional graphs or notes. Use the "Results" tab to view the detailed screening outcome.
+                </p>
+            </div>
+
+            <div id="resultsTab" class="tab-panel active">
+                <h2>Results</h2>
+                <div class="result-tag" id="resultTag" style="background:#e7f5ff;color:var(--primary);">
+                <span class="result-text">📊 Status: Ready</span>
+                <span class="processing-loader" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </span>
+            </div>
+
+
+                <div class="result-main" id="resultMain">Waiting for input...</div>
+                <div class="result-detail" id="resultDetail">
+                    Record a voice sample to see screening results.
+                </div>
+
+                <table class="metrics-table" id="metricsTable" style="display:none;">
+                    <tr>
+                        <td><strong>Median F0:</strong></td>
+                        <td id="metricF0">– Hz</td>
+                    </tr>
+                    <tr>
+                        <td><strong>F0 Std Dev:</strong></td>
+                        <td id="metricStd">– Hz</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jitter:</strong></td>
+                        <td id="metricJitter">– %</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Voice Quality:</strong></td>
+                        <td id="metricQuality">–</td>
+                    </tr>
+                </table>
+
+               <div class="threshold-info">
+    <strong>📋 Validation Data:</strong><br>
+    • <strong>Normal Male:</strong> 95–160 Hz<br>
+    • <strong>Borderline:</strong> 161–194 Hz<br>
+    • <strong>Puberphonia:</strong> 195–279 Hz<br>
+    • <strong>Hoarse if (F0 Std Dev > 30 Hz) OR (jitter > 3%):</strong><br>
+    <small style="margin-top:4px;display:block;">Algorithm: librosa.pYIN </small>
+</div>
+
+<!-- ✅ Buttons come AFTER -->
+<div class="button-row" id="actionButtons" style="display:none;margin-top:14px;gap:8px;">
+    <button type="button" class="btn btn-success" id="saveBtn">💾 Save & Reset</button>
+    <button type="button" class="btn btn-secondary" id="resetNoSaveBtn">↻ Reset (No Save)</button>
+</div>
+
+                <div style="margin-top:12px;font-size:11px;color:var(--muted);border-top:1px solid #e2e8f0;padding-top:10px;">
+                    ⚠️ <strong>Clinical Note:</strong> This tool screens only. Not a diagnostic instrument. Abnormal results warrant ENT evaluation.
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<p id="patientInfo" style="font-size:12px; color:#5b738a; margin:8px 16px 0;"></p>
+
+<script>
+function getQueryParam(key){
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key);
+}
+const PATIENT_ID = getQueryParam('patientId');
+const PATIENT_AGE = getQueryParam('age');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('patientInfo');
+  if(el && PATIENT_ID){
+    el.textContent = `Patient ID: ${PATIENT_ID} • Age: ${PATIENT_AGE}`;
+  }
+});
+</script>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+});
+
+const paragraphs = {
+    en: `Ah, I see. The long, steady road ahead leads to our goal. We gaze at the vast expanse and feel at ease. The air is warm. We hear the peaceful sound. All is well. Stay steady. Breathe easy.`,
+    ta: `ஆ, நான் பார்க்கிறேன். நீண்ட, நிலையான சாலை முன்னே செல்கிறது. நாம் விசாலமான இடத்தை பார்க்கிறோம் மற்றும் சுகமாக உணர்கிறோம். காற்று வெதுவெதுப்பாக உள்ளது. நாம் அமைதியான ஒலியைக் கேட்கிறோம். எல்லாம் நன்றாக உள்ளது. நிலையாக இரு. சுவாசம் எளிதாக இரு.`,
+    te: `ఆ, నేను చూస్తున్నాను. ఎదురుగా ఉన్న పొడవైన, స్థిరమైన రహదారి మన లక్ష్యానికి దారితీస్తుంది. మేము విస్తారమైన ప్రదేశాన్ని చూస్తూ ఆరామంగా ఉన్నాము. గాలి ఉష్ణంగా ఉంది. మేము శాంతియైన ధ్వనిని విన్నాము. అన్నీ బాగా ఉన్నాయి. స్థిరంగా ఉండండి. శ్వాస సులభంగా ఉండండి.`,
+    
+    kn: `ಆ, ನಾನು ನೋಡುತ್ತಿದ್ದೇನೆ. ಎದುರಿಗಿರುವ ಉದ್ದವಾದ, ಸ್ಥಿರವಾದ ದಾರಿ ನಮ್ಮ ಗುರಿಗೆ ಕೆಲವುದೀಪ್ತಿ. ನಾವು ವಿಶಾಲವಾದ ಸ್ಥಳವನ್ನು ನೋಡುತ್ತೇವೆ ಮತ್ತು ಸುಖದಿಂದ ಇರುತ್ತೇವೆ. ಗಾಳಿ ಬೆಚ್ಚಗಿತ್ತು. ನಾವು ಶಾಂತವಾದ ಧ್ವನಿಯನ್ನು ಕೇಳುತ್ತೇವೆ. ಎಲ್ಲವೂ ಚೆನ್ನಾಗಿದೆ. ಸ್ಥಿರವಾಗಿರಿ. ಉಸಿರು ಸುಲಭವಾಗಿರಿ.`,
+    
+    hi: `आह, मैं देख रहा हूँ। आगे का लंबा, स्थिर सड़क हमारे लक्ष्य तक ले जाती है। हम विशाल क्षेत्र को देखते हैं और आराम से हैं। हवा गर्म है। हम शांतिपूर्ण ध्वनि सुनते हैं। सब कुछ ठीक है। स्थिर रहो। सांस आसान रहे।`,
+    
+    ml: `ആ, ഞാൻ കാണുന്നു. മുന്നിലെ നീളമേറിയ, സ്ഥിരമായ വഴി നമ്മുടെ ലക്ഷ്യത്തിലേക്ക് നയിക്കുന്നു. നാം വിശാലമായ പ്രദേശം നോക്കുകയും സുഖമായി ഉണ്ടാകുകയും ചെയ്യുന്നു. വായു ഊഷ്ണമാണ്. നാം ശാന്തവായ ശബ്ദം കേൾക്കുന്നു. എല്ലാം നന്നാണ്. സ്ഥിരമായിരിക്കുക. ശ്വാസം എളുപ്പമാക്കുക.`
+};
+
+const urlParams = new URLSearchParams(window.location.search);
+const ageFromUrl = urlParams.get('age');
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (ageFromUrl) {
+        const ageEl = document.getElementById('ageInput');
+        if (ageEl) ageEl.value = ageFromUrl;
+    }
+    console.log('Patient ID:', PATIENT_ID || 'not provided');
+    
+    // ✅ NEW: Get button elements after DOM loads
+    window.actionButtons = document.getElementById('actionButtons');
+    window.saveBtn = document.getElementById('saveBtn');
+    window.resetNoSaveBtn = document.getElementById('resetNoSaveBtn');
+});
+
+const F0_MIN = 60;
+const F0_MAX = 280;
+const WINDOW_SECONDS = 5;
+
+const NORMAL_MALE_MAX = 160;
+const BORDERLINE_MIN = 161;
+const BORDERLINE_MAX = 194;
+const PUBERPHONIA_MIN = 195;
+
+const F0_STD_HOARSE_THRESHOLD = 30;
+const JITTER_HOARSE_THRESHOLD = 3.0;
+
+const micBtn = document.getElementById('micBtn');
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const liveF0Label = document.getElementById('liveF0Label');
+const resultTag = document.getElementById('resultTag');
+const resultMain = document.getElementById('resultMain');
+const resultDetail = document.getElementById('resultDetail');
+const ageInput = document.getElementById('ageInput');
+const metricsTable = document.getElementById('metricsTable');
+const canvas = document.getElementById('freqCanvas');
+const ctx = canvas.getContext('2d');
+const langSelect = document.getElementById('langSelect');
+const paragraphText = document.getElementById('paragraphText');
+
+langSelect.addEventListener('change', () => {
+    paragraphText.textContent = paragraphs[langSelect.value];
+});
+
+let recording = false;
+let audioCtx = null;
+let mediaStream = null;
+let analyser = null;
+let f0Values = [];
+let timeValues = [];
+let startTime = 0;
+let animId = null;
+let mediaRecorder = null;
+let audioChunks = [];
+let autoSaveTimeout = null;
+let currentMetrics = null;
+let currentClassification = null;
+
+function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = 150 * dpr;
+    drawBackground();
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function mapF0ToY(f0) {
+    const clamped = Math.max(F0_MIN, Math.min(F0_MAX, f0));
+    const norm = (clamped - F0_MIN) / (F0_MAX - F0_MIN);
+    return canvas.height - norm * canvas.height;
+}
+
+function drawBackground() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+
+    const yNormal = mapF0ToY(NORMAL_MALE_MAX);
+    const yBorder = mapF0ToY(BORDERLINE_MAX);
+    const yPub = mapF0ToY(PUBERPHONIA_MIN);
+    const yMin = mapF0ToY(F0_MIN);
+    const yMax = mapF0ToY(F0_MAX);
+
+    ctx.fillStyle = 'rgba(81,168,110,0.15)';
+    ctx.fillRect(0, yNormal, canvas.width, yMin - yNormal);
+
+    ctx.fillStyle = 'rgba(255,165,0,0.15)';
+    ctx.fillRect(0, yBorder, canvas.width, yNormal - yBorder);
+
+    ctx.fillStyle = 'rgba(224,49,49,0.15)';
+    ctx.fillRect(0, yMax, canvas.width, yBorder - yMax);
+
+    ctx.strokeStyle = 'rgba(148,163,184,0.3)';
+    ctx.lineWidth = 1 * (window.devicePixelRatio || 1);
+    const cols = 25;
+    const colW = canvas.width / cols;
+    for (let i = 0; i <= cols; i++) {
+        const x = i * colW;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+}
+
+function mapTimeToX(t, t0) {
+    const dt = t - t0;
+    const norm = Math.max(0, Math.min(1, dt / WINDOW_SECONDS));
+    return norm * canvas.width;
+}
+
+function redrawCurve() {
+    drawBackground();
+    if (f0Values.length < 2) return;
+
+    const lastT = timeValues[timeValues.length - 1];
+    const t0 = Math.max(0, lastT - WINDOW_SECONDS);
+    const tEnd = t0 + WINDOW_SECONDS;
+    document.getElementById('timeRightLabel').textContent = tEnd.toFixed(1) + ' s';
+
+    ctx.save();
+    ctx.lineWidth = 2.5 * (window.devicePixelRatio || 1);
+    ctx.strokeStyle = '#0b7285';
+    ctx.beginPath();
+    let first = true;
+    for (let i = 0; i < f0Values.length; i++) {
+        const t = timeValues[i];
+        if (t < t0) continue;
+        const x = mapTimeToX(t, t0);
+        const y = mapF0ToY(f0Values[i]);
+        if (first) { ctx.moveTo(x, y); first = false; }
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+function estimateF0Autocorrelation(buffer, sampleRate) {
+    const size = buffer.length;
+    let bestOffset = -1;
+    let bestCorr = 0;
+    const minLag = Math.floor(sampleRate / F0_MAX);
+    const maxLag = Math.floor(sampleRate / F0_MIN);
+
+    for (let lag = minLag; lag <= maxLag; lag++) {
+        let corr = 0;
+        for (let i = 0; i < size - lag; i++) {
+            corr += buffer[i] * buffer[i + lag];
+        }
+        if (corr > bestCorr) {
+            bestCorr = corr;
+            bestOffset = lag;
+        }
+    }
+    if (bestOffset === -1 || bestCorr < 1e-3) return null;
+    return sampleRate / bestOffset;
+}
+
+async function toggleRecording() {
+    recording ? stopRecording() : startRecording();
+}
+
+async function startRecording() {
+    const age = parseInt(ageInput.value);
+    if (isNaN(age) || age < 5 || age > 120) {
+        alert('Please enter a valid age (5-120) before recording.');
+        return;
+    }
+
+    try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+        });
+    } catch (e) {
+        alert('Microphone access denied.');
+        return;
+    }
+
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+    }
+
+    const source = audioCtx.createMediaStreamSource(mediaStream);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.8;
+    const bufferLength = analyser.fftSize;
+    const tempArray = new Float32Array(bufferLength);
+
+    source.connect(analyser);
+
+    mediaRecorder = new MediaRecorder(mediaStream);
+    audioChunks = [];
+    mediaRecorder.ondataavailable = event => {
+        audioChunks.push(event.data);
+    };
+    mediaRecorder.start();
+
+    f0Values = [];
+    timeValues = [];
+    startTime = audioCtx.currentTime;
+
+    recording = true;
+    micBtn.classList.add('recording');
+    statusDot.classList.add('live');
+    statusText.textContent = 'Recording…';
+    resultTag.textContent = '🔴 Recording in progress';
+    resultTag.style.background = '#ffe7eb';
+    resultTag.style.color = '#721c24';
+    resultMain.textContent = 'Reading passage…';
+    resultDetail.textContent = 'Analyze pitch stability while reading the paragraph.';
+    metricsTable.style.display = 'none';
+    drawBackground();
+
+    function process() {
+        if (!recording) return;
+        analyser.getFloatTimeDomainData(tempArray);
+        const f0 = estimateF0Autocorrelation(tempArray, audioCtx.sampleRate);
+        const t = audioCtx.currentTime - startTime;
+
+        if (f0 && f0 >= F0_MIN && f0 <= F0_MAX) {
+            f0Values.push(f0);
+            timeValues.push(t);
+            liveF0Label.textContent = f0.toFixed(1) + ' Hz';
+            redrawCurve();
+        }
+        animId = requestAnimationFrame(process);
+    }
+    animId = requestAnimationFrame(process);
+}
+
+function stopRecording() {
+    if (!recording) return;
+    recording = false;
+
+    if (animId) cancelAnimationFrame(animId);
+
+    mediaRecorder.stop();
+    mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+        resultTag.textContent = '⏳ Analyzing...';
+        resultTag.style.background = '#e7f5ff';
+        resultTag.style.color = '#0b7285';
+        resultMain.textContent = 'Processing...';
+
+        if (mediaStream) {
+            mediaStream.getTracks().forEach(t => t.stop());
+            mediaStream = null;
+        }
+
+        micBtn.classList.remove('recording');
+        statusDot.classList.remove('live');
+        statusText.textContent = 'Ready';
+
+        const formData = new FormData();
+        formData.append("audio", audioBlob, "recording.wav");
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/analyze", {
+                method: "POST",
+                body: formData
+            });
+            const data = await response.json();
+
+            if (data.status === "success") {
+                displayResults(data);
+            } else {
+                alert("Analysis failed: " + data.message);
+                resultMain.textContent = "Analysis Failed";
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Could not connect to analysis server. Make sure voice_screener_api.py is running.");
+            resultMain.textContent = "Server Error";
+        }
+    };
+}
+
+async function saveResultToServer(metrics, classification) {
+    autoSaveTimeout = setTimeout(async () => {
+        try {
+            const response = await fetch("http://127.0.0.1:5000/save-result", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    patient_id: PATIENT_ID || "anonymous",
+                    age: ageInput.value || "unknown",
+                    median_f0_hz: metrics.median_f0_hz,
+                    f0_std_hz: metrics.f0_std_hz,
+                    jitter_percent: metrics.jitter_percent,
+                    pitch_label: classification.pitch,
+                    quality_label: classification.quality
+                })
+            });
+            if (response.ok) {
+                console.log("✅ AUTO-SAVED to Excel after 5-minute delay:", PATIENT_ID);
+            }
+        } catch (err) {
+            console.warn("💾 Save failed (offline OK):", err);
+        }
+    }, 300000);
+}
+
+
+function displayResults(data) {
+    console.log("🎯 displayResults START", data);
+    
+    const metrics = data.metrics;
+    const classification = data.classification;
+    const conf = data.confidence;
+    window.currentConf = conf;
+  // NEW - fixes 90Hz
+    
+    // Update metrics table (same)
+    document.getElementById('metricF0').textContent = metrics.median_f0_hz + ' Hz';
+    document.getElementById('metricStd').textContent = metrics.f0_std_hz + ' Hz';
+    document.getElementById('metricJitter').textContent = metrics.jitter_percent + ' %';
+    document.getElementById('metricQuality').textContent = classification.quality;
+    metricsTable.style.display = 'table';
+
+    let label, detail, tagBg, tagColor;
+    const meanF0 = metrics.median_f0_hz;
+    const age = parseInt(ageInput.value, 10) || 0;
+
+    // 🔥 NEW: Low confidence handling (uses GRAPH F0 as fallback)
+    if (!conf.is_high) {
+            const graphF0_clean = f0Values.filter(f => f >= 95 && f <= 280);
+            const graphMedian = graphF0_clean.length > 5 ? 
+                (graphF0_clean.reduce((a,b)=>a+b)/graphF0_clean.length) : meanF0;
+            
+            // FULL DIAGNOSIS FROM GRAPH!
+            let graphPitch;
+            if (graphMedian <= 160) graphPitch = "Normal Male";
+            else if (graphMedian <= 194) graphPitch = "Borderline";
+            else graphPitch = "Puberphonia";
+            
+            
+            label = `⚠️ Graph: ${graphPitch}`;
+            detail = `pYIN weak (${conf.voiced_frames}f@${conf.mean_voiced_prob}). Graph F0: ${graphMedian.toFixed(1)}Hz → ${graphPitch}. Retry LOUD AAAA 3s.`;
+            
+            // Color by result!
+            if (graphPitch === "Puberphonia") { 
+                tagBg = '#ffe7eb'; tagColor = '#721c24'; 
+            } else if (graphPitch === "Borderline") { 
+                tagBg = '#fff3cd'; tagColor = '#856404'; 
+            } else { 
+                tagBg = '#d1e7dd'; tagColor = '#155724'; 
+            }
+            
+            classification.pitch = graphPitch;
+            classification.quality = "Graph Backup";
+        } else {
+
+        // ORIGINAL classification logic (unchanged)
+        if (age < 16) {
+            if (meanF0 > NORMAL_MALE_MAX) {
+                label = 'ℹ️ High Pitch in Adolescent';
+                detail = `Age ${age} years. Median F0: ${meanF0} Hz (> ${NORMAL_MALE_MAX} Hz adult-male limit). Flags high pitch. ${classification.quality === 'Hoarse' ? 'Instability elevated. ' : ''}Consider ENT/SLP review.`;
+                tagBg = '#e7f5ff'; tagColor = '#0b7285';
+            } else {
+                label = 'ℹ️ Adolescent Voice – No High Pitch';
+                detail = `Age ${age} years. Median F0: ${meanF0} Hz (not > ${NORMAL_MALE_MAX} Hz). ${classification.quality === 'Hoarse' ? 'Instability present. ' : ''}Pitch normal for screening.`;
+                tagBg = '#e7f5ff'; tagColor = '#0b7285';
+            }
+        } else if (classification.pitch === 'Normal Male') {
+            label = '✅ Normal Male Voice';
+            detail = `Age ${age} years. Median F0: ${meanF0} Hz (95–160 Hz normal). ${classification.quality === 'Hoarse' ? 'Note: instability detected.' : 'Healthy pitch/quality.'}`;
+            tagBg = '#d1e7dd'; tagColor = '#155724';
+        } else if (classification.pitch === 'Borderline') {
+            label = '⚠️ Borderline / High Pitch';
+            detail = `Age ${age} years. Median F0: ${meanF0} Hz (161–194 Hz borderline). ${classification.quality === 'Hoarse' ? 'Instability also detected. ' : ''}Consider speech assessment.`;
+            tagBg = '#fff3cd'; tagColor = '#856404';
+        } else if (classification.pitch === 'Puberphonia') {
+            label = '🔴 Likely Puberphonia';
+            detail = `Age ${age} years. Median F0: ${meanF0} Hz (≥195 Hz puberphonia range). Recommend ENT evaluation.`;
+            tagBg = '#ffe7eb'; tagColor = '#721c24';
+        }
+    }
+
+    // Apply results (same)
+    resultTag.textContent = label;
+    resultTag.style.background = tagBg;
+    resultTag.style.color = tagColor;
+    resultMain.textContent = label;
+    resultDetail.textContent = detail;
+    
+    // NEW: Show confidence in threshold box
+    const thresholdInfo = document.querySelector('.threshold-info');
+    if (thresholdInfo) {
+        thresholdInfo.innerHTML += `<br><small>🔍 Conf: ${conf.is_high ? '✅ High' : '⚠️ Low'} (${conf.voiced_frames} frames, p=${conf.mean_voiced_prob})</small>`;
+    }
+
+    // Freeze graph + show buttons (same)
+    f0Values = [...f0Values];
+    timeValues = [...timeValues];
+    redrawCurve();
+    window.actionButtons.style.display = 'flex';
+
+    // Store + auto-save (same)
+    currentMetrics = metrics;
+    currentClassification = classification;
+    saveResultToServer(metrics, classification);
+    
+    console.log("✅ displayResults FINISHED");
+}
+
+async function manualSaveResult() {
+  if (!currentMetrics || !currentClassification) return;
+  if (autoSaveTimeout) { clearTimeout(autoSaveTimeout); autoSaveTimeout = null; }
+
+  const conf = window.currentConf || { voiced_frames: 0, mean_voiced_prob: 0, is_high: false };
+
+  try {
+    const response = await fetch("http://127.0.0.1:5000/save-result", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        patient_id: PATIENT_ID || "anonymous",
+        age: ageInput.value || "unknown",
+        median_f0_hz: currentMetrics.median_f0_hz,
+        f0_std_hz: currentMetrics.f0_std_hz,
+        jitter_percent: currentMetrics.jitter_percent,
+        pitch_label: currentClassification.pitch,
+        quality_label: currentClassification.quality,
+        voiced_frames: conf.voiced_frames,
+        mean_voiced_prob: conf.mean_voiced_prob,
+        confidence_high: conf.is_high
+      })
+    });
+    if (response.ok) {
+      console.log("✅ MANUALLY SAVED:", PATIENT_ID);
+      resetAll();
+    }
+  } catch (err) {
+    alert("Save failed. Try again.");
+  }
+}
+
+
+function resetNoSave() {
+    if (autoSaveTimeout) { clearTimeout(autoSaveTimeout); autoSaveTimeout = null; }
+    console.log("✅ RESET WITHOUT SAVING");
+    resetAll();
+}
+
+function resetAll() {
+    console.log("✅ FULL RESET - Clearing ALL results + graph");
+    
+    // Stop recording
+    recording = false;
+    if (animId) cancelAnimationFrame(animId);
+    if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream = null;
+    }
+    
+    // Clear ALL data
+    f0Values = [];
+    timeValues = [];
+    audioChunks = [];
+    currentMetrics = null;
+    currentClassification = null;
+    
+    // Reset UI completely
+    micBtn.classList.remove('recording');
+    statusDot.classList.remove('live');
+    statusText.textContent = 'Ready';
+    liveF0Label.textContent = '– Hz';
+    
+    // ✅ CLEAR RESULTS (THIS WAS MISSING!)
+    resultTag.textContent = '📊 Status: Ready';
+    resultTag.style.background = '#e7f5ff';
+    resultTag.style.color = '#0b7285';
+    resultMain.textContent = 'Waiting for input...';
+    resultDetail.textContent = 'Record a voice sample to see screening results.';
+    metricsTable.style.display = 'none';
+    if (window.actionButtons) window.actionButtons.style.display = 'none';
+    
+    // Clear graph
+    drawBackground();
+    
+    console.log("✅ SCREEN FULLY CLEARED - Ready for next patient");
+}
+
+micBtn.addEventListener('click', toggleRecording);
+window.saveBtn.addEventListener('click', manualSaveResult);
+window.resetNoSaveBtn.addEventListener('click', resetNoSave);
+
+
+</script>
+</body>
+</html> 
